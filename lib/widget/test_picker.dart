@@ -3,34 +3,31 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_cropper_example/utils.dart';
-import 'package:image_cropper_example/widget/floating_button.dart';
 import 'package:image_cropper_example/widget/image_list_widget.dart';
 
-class PredefinedPage extends StatefulWidget {
-  final bool isGallery;
-
-  const PredefinedPage({
-    Key key,
-    @required this.isGallery,
-  }) : super(key: key);
+class TestPicker extends StatefulWidget {
+  const TestPicker({Key key}) : super(key: key);
 
   @override
-  _PredefinedPageState createState() => _PredefinedPageState();
+  State<TestPicker> createState() => _TestPickerState();
 }
 
-class _PredefinedPageState extends State<PredefinedPage> {
+class _TestPickerState extends State<TestPicker> {
   List<File> imageFiles = [];
-
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: ImageListWidget(imageFiles: imageFiles),
-        floatingActionButton: FloatingButtonWidget(onClicked: onClickedButton),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      );
+  Widget build(BuildContext context) {
+    print('imageFiles.length = ${imageFiles.length}');
+    return Column(
+      children: [
+        TextButton(onPressed: onClickedButton, child: Text('data')),
+        Expanded(child: ImageListWidget(imageFiles: imageFiles)),
+      ],
+    );
+  }
 
   Future onClickedButton() async {
     final file = await Utils.pickMedia(
-      isGallery: widget.isGallery,
+      isGallery: true,
       cropImage: cropPredefinedImage,
     );
 
