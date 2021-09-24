@@ -13,26 +13,59 @@ class TestPicker extends StatefulWidget {
 }
 
 class _TestPickerState extends State<TestPicker> {
+  bool isGallery = true;
   List<File> imageFiles = [];
   @override
   Widget build(BuildContext context) {
-    print('imageFiles.length = ${imageFiles.length}');
+    //print('imageFiles.length = ${imageFiles.length}');
     return Column(
       children: [
-        TextButton(onPressed: onClickedButton, child: Text('data')),
-        Expanded(child: ImageListWidget(imageFiles: imageFiles)),
+        Row(
+          children: [
+            TextButton(onPressed: onClickedButton, child: Text('Выбрать')),
+          ],
+        ),
+        ImageListWidget(imageFiles: imageFiles),
       ],
     );
   }
 
   Future onClickedButton() async {
-    final file = await Utils.pickMedia(
-      isGallery: true,
-      cropImage: cropPredefinedImage,
+    showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Выбирите источник изображения'),
+        //content: Text('Do you really want to exit'),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          cropImage(context, isGallery),
+          cropImage(context, !isGallery),
+        ],
+      ),
     );
+    // final file = await Utils.pickMedia(
+    //   isGallery: isGallery,
+    //   cropImage: cropPredefinedImage,
+    // );
 
-    if (file == null) return;
-    setState(() => imageFiles.add(file));
+    // if (file == null) return;
+    // setState(() => imageFiles.add(file));
+  }
+
+  OutlinedButton cropImage(BuildContext context, bool isGalery) {
+    return OutlinedButton(
+      child: Text(isGalery ? 'Галерея' : 'Камера'),
+      onPressed: () async {
+        Navigator.pop(context, true);
+        final file = await Utils.pickMedia(
+          isGallery: isGalery,
+          cropImage: cropPredefinedImage,
+        );
+
+        if (file == null) return;
+        setState(() => imageFiles.add(file));
+      },
+    );
   }
 
   Future<File> cropPredefinedImage(File imageFile) async =>
